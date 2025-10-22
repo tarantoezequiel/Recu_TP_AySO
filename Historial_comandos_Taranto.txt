@@ -1,0 +1,58 @@
+# HISTORIAL DE COMANDOS – EZEQUIEL TARANTO (COMISIÓN 116 TM)
+
+# ====== PUNTO A ======
+sudo mkdir -p /datos/{textos/{libros,revistas},videos/{peliculas,series}}
+sudo tree /datos
+
+# ====== PUNTO B ======
+sudo groupadd -f p1c1_2024_g1
+sudo useradd -m -G p1c1_2024_g1 p1c1_2024_u1
+echo "p1c1_2024_u1:clave1" | sudo chpasswd
+sudo chown -R p1c1_2024_u1:p1c1_2024_g1 /datos
+sudo chmod -R 750 /datos
+sudo su -c "whoami > /datos/validar1.txt" p1c1_2024_u1
+cat /etc/group
+ls -ld /datos
+
+# ====== PUNTO C ======
+sudo groupadd -f p1c1_2024_Todos
+sudo useradd -m -g p1c1_2024_Todos p1c1_2024_u2
+echo "p1c1_2024_u2:clave1" | sudo chpasswd
+sudo usermod -aG p1c1_2024_Todos p1c1_2024_u1
+sudo chgrp -R p1c1_2024_Todos /datos
+sudo chmod -R g+w /datos
+sudo find /datos -type d -exec chmod o=rx {} \;
+sudo find /datos -type f -exec chmod o= {} \;
+sudo su -c "id >> /datos/validar1.txt" p1c1_2024_u2
+sudo -u p1c1_2024_u1 cat /datos/validar1.txt
+sudo -u p1c1_2024_u2 cat /datos/validar1.txt
+ls -l /datos
+
+# ====== PUNTO D ======
+mkdir -p ~/Ejercicio_D/{rx,tx}/lotes_{1..20}
+mkdir -p ~/Ejercicio_D/rx/extras_{1..100}
+tree ~/Ejercicio_D/ --noreport | pr -T -s'|' -w 80 --column 4
+
+# ====== PUNTO E ======
+mkdir -p ~/Punto_E
+grep -i '^MemTotal' /proc/meminfo > ~/Punto_E/Filtro_basico.txt
+lscpu | grep -E 'Model name|MHz' >> ~/Punto_E/Filtro_basico.txt
+cat ~/Punto_E/Filtro_basico.txt
+
+# ====== PUNTO F ======
+mkdir -p ~/Punto_F
+{
+  echo "Mi IP pública es: $(curl -s ifconfig.me)"
+  echo -n "CPU Modelo: "; lscpu | awk -F: '/Model name/{print \$2}' | sed 's/^ //'
+  echo -n "Frecuencia: "; lscpu | awk -F: '/MHz/{print \$2}' | head -n1 | sed 's/^ //'
+} > ~/Punto_F/Filtro_Avanzado.txt
+cat ~/Punto_F/Filtro_Avanzado.txt
+
+# ====== SUBIDA A GITHUB ======
+cd ~/Recu_TP_AySO
+git init
+git branch -M main
+git remote add origin https://github.com/tarantoezequiel/Recu_TP_AySO.git
+git add .
+git commit -m "ADD: TP completo - Ezequiel Taranto - Comisión 116 TM"
+git push -u origin main
